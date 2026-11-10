@@ -651,6 +651,23 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
     </div>
   </div>
 
+  <div class="view" id="adminView" hidden>
+    <header class="bar">
+      <div class="grow"><h1>Gigsy Admin</h1></div>
+      <button class="icon-btn" data-act="signOut" aria-label="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></button>
+    </header>
+    <div class="scroll">
+      <p class="small-muted" id="adminWho" style="margin:0 2px 6px;font-size:14px"></p>
+      <p class="sec" id="accPendHead">Waiting</p>
+      <div id="accPending"></div>
+      <p class="sec">Approved</p>
+      <div id="accApproved"></div>
+      <div id="accOtherWrap" hidden><p class="sec">Denied or Removed</p><div id="accOther"></div></div>
+      <p class="small-muted" style="margin:16px 2px 0;font-size:13px;line-height:1.45">Each person only ever sees their own hours, and this admin account has none. Removing someone stops their access straight away. To delete their login completely, also delete them in Firebase under Authentication, Users.</p>
+      <button class="btn glass" type="button" data-act="signOut" style="width:100%;margin-top:18px">Sign Out</button>
+    </div>
+  </div>
+
   <div class="view" id="homeView">
     <header class="bar">
       <div class="grow"><h1>Gigsy</h1></div>
@@ -755,7 +772,6 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
     <button type="button" class="co-item" data-act="fy"><span class="mini" style="background:#3A3F46"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="nm">Tax Year</span><span class="rt" id="fySub"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
     <p class="sec">Account</p>
     <button type="button" class="co-item" data-act="signOut"><span class="mini" style="background:#3A3F46"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></span><span class="nm" id="acctEmail">Signed in</span><span class="rt">Sign Out</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
-    <button type="button" class="co-item" data-act="access" id="accRow" hidden><span class="mini" style="background:#225A7C"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5.5 6.5-5.5s5.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c1.8.8 3 2.6 3.5 5.2"/></svg></span><span class="nm">Access Requests</span><span class="rt" id="accSub"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
     <p class="sec">Backup</p>
     <button type="button" class="co-item" data-act="exportBackup"><span class="mini" style="background:#3A3F46"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></span><span class="nm">Export Backup</span><span class="rt" id="bkSub"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
     <button type="button" class="co-item" data-act="importBackup"><span class="mini" style="background:#3A3F46"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></svg></span><span class="nm">Import Backup</span><span class="rt"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
@@ -788,18 +804,6 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
     <button type="button" class="text-btn" data-act="cropReset" style="margin:6px auto 0;display:flex">Reset</button>
   </div>
   <div class="foot"><button type="button" class="btn glass" data-act="cropCancel">Cancel</button><button type="button" class="btn pri" data-act="cropUse">Use Logo</button></div>
-</dialog>
-<dialog id="accDlg" aria-labelledby="accTitle">
-  <div class="sheet" style="padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))">
-    <div class="grabber"></div>
-    <div class="sheet-title"><h2 id="accTitle">Access</h2><button type="button" class="x" data-act="closeAcc" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <p class="sec" style="margin-top:0">Waiting</p>
-    <div id="accPending"></div>
-    <p class="sec">Approved</p>
-    <div id="accApproved"></div>
-    <div id="accOtherWrap" hidden><p class="sec">Denied or Removed</p><div id="accOther"></div></div>
-    <p class="small-muted" style="margin:14px 2px 0;font-size:13px;line-height:1.45">Each person only ever sees their own hours. Removing someone stops their access straight away. To delete their login completely, also delete them in Firebase under Authentication, Users.</p>
-  </div>
 </dialog>
 <dialog id="impDlg" aria-labelledby="impTitle">
   <div class="sheet" style="padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))">
@@ -1198,7 +1202,7 @@ function parseConfig(t){
   try{ const c = JSON.parse(j); return c.apiKey && c.projectId ? c : null; }catch(e){ return null; }
 }
 function showOnly(id){
-  ['authView', 'setupView', 'waitView'].forEach(v => { $('#' + v).hidden = v !== id; });
+  ['authView', 'setupView', 'waitView', 'adminView'].forEach(v => { $('#' + v).hidden = v !== id; });
   if(id){ $('#homeView').hidden = true; $('#coView').hidden = true; }
 }
 const authMsg = e => {
@@ -1227,7 +1231,7 @@ addEventListener('pageshow', fitScreen);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) setTimeout(fitScreen, 100); });
 addEventListener('orientationchange', () => setTimeout(fitScreen, 300));
 /* ---------- version and update check ---------- */
-const APP_VERSION = '1.0', APP_DATE = '10 Nov 2026';
+const APP_VERSION = '1.1', APP_DATE = '10 Nov 2026';
 function paintAbout(){
   fitScreen();
   $('#appVer').textContent = APP_VERSION;
@@ -1255,7 +1259,7 @@ async function init(){
       $('#acctEmail').textContent = user.email || 'Signed in';
       checkAccess(user);
     }else{
-      stopData(); uid = null; S = blank(); E = []; mode = 'signedout'; isAdmin = false; $('#accRow').hidden = true;
+      stopData(); uid = null; S = blank(); E = []; mode = 'signedout'; isAdmin = false;
       document.querySelectorAll('dialog[open]').forEach(d => d.close());
       if(location.hash) location.hash = '';
       showOnly('authView');
@@ -1302,7 +1306,7 @@ window.addEventListener('hashchange', route);
 /* ---------- render ---------- */
 const ready = () => mode !== 'loading' && stateLoaded && entriesLoaded;
 function render(){
-  if(mode === 'signedout' || mode === 'setup' || mode === 'waiting') return;
+  if(mode === 'signedout' || mode === 'setup' || mode === 'waiting' || mode === 'admin') return;
   if(view === 'company' && ready() && ((cur !== 'other' && !known(cur)) || (cur === 'other' && !hasOther()))){ view = 'home'; location.hash = ''; }
   $('#homeView').hidden = view !== 'home';
   $('#coView').hidden = view !== 'company';
@@ -2414,10 +2418,11 @@ function showWait(st){
 async function checkAccess(user){
   /* the owner is recognised by the database rules: only they can list access requests */
   isAdmin = await fs.collection('access').where('status', '==', 'pending').limit(1).get().then(() => true).catch(() => false);
-  $('#accRow').hidden = !isAdmin;
-  if(isAdmin){ enterApp(); watchRequests(); return; }
+  if(isAdmin){ mode = 'admin'; showOnly('adminView'); $('#adminWho').textContent = `Signed in as ${user.email}`; renderAccess(); watchRequests(); return; }
   const ref = fs.doc('access/' + user.uid);
+  const me = user.uid;
   accessUnsub = ref.onSnapshot(snap => {
+    if(uid !== me || isAdmin) return;   /* ignore a listener left over from another sign-in */
     if(!snap.exists){ ref.set({email: user.email || '', status: 'pending', requested: Date.now()}).catch(() => {}); showWait('pending'); return; }
     const st = (snap.data() || {}).status;
     if(st === 'approved'){ if(mode !== 'db') enterApp(); }
@@ -2428,9 +2433,8 @@ function watchRequests(){
   accUnsub = fs.collection('access').onSnapshot(q => {
     accList = q.docs.map(d => Object.assign({uid: d.id}, d.data())).sort((a, b) => (b.requested || 0) - (a.requested || 0));
     const n = accList.filter(a => a.status === 'pending').length;
-    $('#accSub').textContent = n ? `${n} waiting` : '';
-    if($('#accDlg').open) renderAccess();
-    render();
+    $('#accPendHead').textContent = n ? `Waiting (${n})` : 'Waiting';
+    renderAccess();
   }, () => {});
 }
 function renderAccess(){
@@ -2667,8 +2671,6 @@ document.addEventListener('click', async ev => {
   else if(act === 'myDetails') openMe();
   else if(act === 'history') openHist();
   else if(act === 'signOut'){ if(setDlg.open) setDlg.close(); fbAuth.signOut(); }
-  else if(act === 'access'){ renderAccess(); showSheet($('#accDlg')); }
-  else if(act === 'closeAcc') $('#accDlg').close();
   else if(act === 'signUp') signUp();
   else if(act === 'resetPw') resetPw();
   else if(act === 'saveCfg') saveConfig();
