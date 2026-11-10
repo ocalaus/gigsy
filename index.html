@@ -11,8 +11,15 @@
 <link rel="icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Gigsy">
+<script>
+(function(){
+  var ua = navigator.userAgent, phone = /iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) < 500);
+  var homeApp = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  if(phone && !homeApp) document.documentElement.classList.add('ios-tab');
+})();
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -601,14 +608,19 @@ dialog{margin-bottom:calc(0px - var(--vgap,0px))}
 dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(safe-area-inset-top,0px) - 30px)!important}
 #weekDlg,#fyDlg{height:calc(100dvh + var(--vgap,0px))!important;margin-bottom:0!important}
 @media (display-mode: standalone){
-  .app{padding-top:calc(env(safe-area-inset-top,0px) + 8px)}
-  #weekDlg .wsheet-head,#fyDlg .wsheet-head{padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
+  .app{padding-top:calc(max(env(safe-area-inset-top,0px), var(--top-min,0px)) + 8px)}
+  #weekDlg .wsheet-head,#fyDlg .wsheet-head{padding-top:calc(max(env(safe-area-inset-top,0px), var(--top-min,0px)) + 16px)}
 }
 .acc-row{display:flex;align-items:center;gap:8px;padding:10px 12px;margin-bottom:8px;border-radius:14px;background:var(--field);border:1px solid var(--glass-line)}
 .acc-info{flex:1;min-width:0;display:flex;flex-direction:column}
 .acc-info .t{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .acc-info .s{font-size:12.5px;color:var(--muted)}
 .btn.sm{min-height:38px;padding:0 12px;font-size:14px;border-radius:10px;flex:none}
+/* Safari tab on iPhone: keep everything clear of the clock area */
+html.ios-tab .app{padding-top:calc(max(env(safe-area-inset-top,0px), 54px) + 8px)}
+html.ios-tab #weekDlg .wsheet-head,html.ios-tab #fyDlg .wsheet-head{padding-top:calc(max(env(safe-area-inset-top,0px), 54px) + 16px)}
+html.ios-tab .auth{padding-top:24px}
+@media (display-mode: standalone){ .auth{padding-top:24px} }
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(8px);background:rgba(233,228,216,.96);color:#171819;padding:10px 18px;border-radius:14px;font-weight:600;font-size:14.5px;max-width:calc(100% - 32px);z-index:30;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:var(--shadow-lg)}
 .toast.show{opacity:1;transform:translateX(-50%)}
 @media (prefers-reduced-motion:reduce){.pulse,dialog[open]{animation:none}.toast,.seg button,.bubble,.orb{transition:none}}
@@ -1222,16 +1234,33 @@ function fitScreen(){
   const sh = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
   const gap = 0;
   if(sa) document.documentElement.style.setProperty('--app-h', sh + 'px'); else document.documentElement.style.removeProperty('--app-h');
+  if(sa && /iPhone|iPod/.test(navigator.userAgent) && Math.max(screen.width, screen.height) >= 812) document.documentElement.style.setProperty('--top-min', '50px');
   document.documentElement.style.setProperty('--vgap', gap + 'px');
 }
 fitScreen();
+/* keyboard: iPhone slides the whole page up when you tap a field. Put it back when the field would be visible anyway,
+   and always once the keyboard closes, so nothing ends up stuck under the clock. */
+(function(){
+  const isField = el => el && el.matches && el.matches('input, textarea, select');
+  function settle(){
+    const vv = window.visualViewport, el = document.activeElement;
+    if(!window.scrollY && !(vv && vv.offsetTop)) return;
+    if(!isField(el)){ window.scrollTo(0, 0); return; }
+    const r = el.getBoundingClientRect(), visible = vv ? vv.height : innerHeight;
+    if(r.bottom + window.scrollY < visible - 16) window.scrollTo(0, 0);
+  }
+  addEventListener('focusin', () => { setTimeout(settle, 60); setTimeout(settle, 350); });
+  addEventListener('focusout', () => setTimeout(() => { if(!isField(document.activeElement)) window.scrollTo(0, 0); }, 120));
+  addEventListener('scroll', () => { if(window.scrollY && !isField(document.activeElement)) window.scrollTo(0, 0); }, {passive:true});
+  if(window.visualViewport){ visualViewport.addEventListener('resize', settle); visualViewport.addEventListener('scroll', settle); }
+})();
 [300, 1000, 2500].forEach(t => setTimeout(fitScreen, t));
 addEventListener('resize', fitScreen);
 addEventListener('pageshow', fitScreen);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) setTimeout(fitScreen, 100); });
 addEventListener('orientationchange', () => setTimeout(fitScreen, 300));
 /* ---------- version and update check ---------- */
-const APP_VERSION = '1.1', APP_DATE = '10 Nov 2026';
+const APP_VERSION = '1.13', APP_DATE = '10 Nov 2026';
 function paintAbout(){
   fitScreen();
   $('#appVer').textContent = APP_VERSION;
@@ -2418,7 +2447,7 @@ function showWait(st){
 async function checkAccess(user){
   /* the owner is recognised by the database rules: only they can list access requests */
   isAdmin = await fs.collection('access').where('status', '==', 'pending').limit(1).get().then(() => true).catch(() => false);
-  if(isAdmin){ mode = 'admin'; showOnly('adminView'); $('#adminWho').textContent = `Signed in as ${user.email}`; renderAccess(); watchRequests(); return; }
+  if(isAdmin){ mode = 'admin'; showOnly('adminView'); $('#adminWho').textContent = `Signed in as ${user.email}. Version ${APP_VERSION}`; renderAccess(); watchRequests(); return; }
   const ref = fs.doc('access/' + user.uid);
   const me = user.uid;
   accessUnsub = ref.onSnapshot(snap => {
