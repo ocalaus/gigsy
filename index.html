@@ -610,6 +610,7 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
 .acc-info .s{font-size:12.5px;color:var(--muted)}
 .btn.sm{min-height:38px;padding:0 12px;font-size:14px;border-radius:10px;flex:none}
 @media (display-mode: standalone){ .auth{padding-top:24px} }
+.auth h1 + form{margin-top:24px}
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(8px);background:rgba(233,228,216,.96);color:#171819;padding:10px 18px;border-radius:14px;font-weight:600;font-size:14.5px;max-width:calc(100% - 32px);z-index:30;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:var(--shadow-lg)}
 .toast.show{opacity:1;transform:translateX(-50%)}
 @media (prefers-reduced-motion:reduce){.pulse,dialog[open]{animation:none}.toast,.seg button,.bubble,.orb{transition:none}}
@@ -622,7 +623,6 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
   <div class="view" id="authView" hidden>
     <div class="auth">
       <h1>Gigsy</h1>
-      <p class="sub">Sign in, or request access with your email and a password. New accounts need to be approved before they can be used.</p>
       <form id="authForm" novalidate>
         <label>Email<input name="email" type="email" inputmode="email" autocomplete="username"></label>
         <label>Password<input name="password" type="password" autocomplete="current-password"></label>
@@ -658,13 +658,11 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
       <button class="icon-btn" data-act="signOut" aria-label="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></button>
     </header>
     <div class="scroll">
-      <p class="small-muted" id="adminWho" style="margin:0 2px 6px;font-size:14px"></p>
       <p class="sec" id="accPendHead">Waiting</p>
       <div id="accPending"></div>
       <p class="sec">Approved</p>
       <div id="accApproved"></div>
       <div id="accOtherWrap" hidden><p class="sec">Denied or Removed</p><div id="accOther"></div></div>
-      <p class="small-muted" style="margin:16px 2px 0;font-size:13px;line-height:1.45">Each person only ever sees their own hours, and this admin account has none. Removing someone stops their access straight away. To delete their login completely, also delete them in Firebase under Authentication, Users.</p>
       <button class="btn glass" type="button" data-act="signOut" style="width:100%;margin-top:18px">Sign Out</button>
     </div>
   </div>
@@ -958,7 +956,7 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
       <label>Name<input name="name" autocomplete="organization"></label>
       <div class="lbl">Super
         <div class="seg3" id="superSeg">
-          <button type="button" data-super="plus">+ Super</button>
+          <button type="button" data-super="plus">Excl. Super</button>
           <button type="button" data-super="incl">Incl. Super</button>
           <button type="button" data-super="none">No Super</button>
         </div>
@@ -1071,7 +1069,7 @@ const entryRate = e => (Number(e.rate) > 0 ? Number(e.rate) : coRate(e.companyId
 const colorOf = c => (c && c.color) || PALETTE[Math.max(0, S.companies.indexOf(c)) % PALETTE.length];
 const logoSrc = c => c ? (c.logo ? '/_blob/' + c.logo : (c.logoData || '')) : '';
 function superOf(cid){ const c = company(cid); const pct = c && c.superPct != null && Number(c.superPct) >= 0 ? Number(c.superPct) : SG_DEFAULT; return {mode:(c && c.superMode) || 'plus', pct}; }
-const superLabel = cid => ({plus:'+ super', incl:'incl. super', none:''})[superOf(cid).mode];
+const superLabel = cid => ({plus:'excl. super', incl:'incl. super', none:''})[superOf(cid).mode];
 /* pay split for one shift: wage (before tax, without super), super, and the two together */
 function payOf(e){
   const r = entryRate(e); if(!r) return null;
@@ -1248,16 +1246,8 @@ addEventListener('pageshow', fitScreen);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) setTimeout(fitScreen, 100); });
 addEventListener('orientationchange', () => setTimeout(fitScreen, 300));
 /* ---------- version and update check ---------- */
-const APP_VERSION = '2.0', APP_DATE = '10 Nov 2026';
-function layoutInfo(){
-  const pr = document.createElement('div'); pr.style.cssText = 'position:fixed;top:0;left:0;padding-top:env(safe-area-inset-top,0px);visibility:hidden';
-  document.body.appendChild(pr); const ins = Math.round(parseFloat(getComputedStyle(pr).paddingTop) || 0); pr.remove();
-  const app = document.querySelector('.app'), vv = window.visualViewport;
-  const sa = window.navigator.standalone ? 'yes' : 'no', dm = matchMedia('(display-mode: standalone)').matches ? 'yes' : 'no';
-  return `Layout check: icon ${sa}/${dm}, inset ${ins}, app top ${Math.round(app.getBoundingClientRect().top)}, pad ${Math.round(parseFloat(getComputedStyle(app).paddingTop))}, scroll ${Math.round(scrollY)}, view ${innerHeight}/${vv ? Math.round(vv.height) : '-'}/${vv ? Math.round(vv.offsetTop) : '-'}, screen ${screen.height}, app h ${Math.round(app.getBoundingClientRect().height)}`;
-}
+const APP_VERSION = '2.0.1', APP_DATE = '10 Nov 2026';
 function paintAbout(){
-  const li = $('#layoutLine'); if(li) li.textContent = layoutInfo();
   fitScreen();
   $('#appVer').textContent = APP_VERSION;
 }
@@ -2443,7 +2433,7 @@ function showWait(st){
 async function checkAccess(user){
   /* the owner is recognised by the database rules: only they can list access requests */
   isAdmin = await fs.collection('access').where('status', '==', 'pending').limit(1).get().then(() => true).catch(() => false);
-  if(isAdmin){ mode = 'admin'; showOnly('adminView'); $('#adminWho').textContent = `Signed in as ${user.email}. Version ${APP_VERSION}`; setTimeout(() => { $('#adminWho').textContent += '. ' + layoutInfo(); }, 600); renderAccess(); watchRequests(); return; }
+  if(isAdmin){ mode = 'admin'; showOnly('adminView');  renderAccess(); watchRequests(); return; }
   const ref = fs.doc('access/' + user.uid);
   const me = user.uid;
   accessUnsub = ref.onSnapshot(snap => {
