@@ -611,6 +611,8 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
 .btn.sm{min-height:38px;padding:0 12px;font-size:14px;border-radius:10px;flex:none}
 @media (display-mode: standalone){ .auth{padding-top:24px} }
 .auth h1 + form{margin-top:24px}
+.btn.sm.del{color:var(--red)}
+.btn.danger{background:#B3403A;color:#fff}
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(8px);background:rgba(233,228,216,.96);color:#171819;padding:10px 18px;border-radius:14px;font-weight:600;font-size:14.5px;max-width:calc(100% - 32px);z-index:30;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:var(--shadow-lg)}
 .toast.show{opacity:1;transform:translateX(-50%)}
 @media (prefers-reduced-motion:reduce){.pulse,dialog[open]{animation:none}.toast,.seg button,.bubble,.orb{transition:none}}
@@ -771,6 +773,7 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
     <button type="button" class="co-item" data-act="fy"><span class="mini" style="background:#3A3F46"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="nm">Tax Year</span><span class="rt" id="fySub"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
     <p class="sec">Account</p>
     <button type="button" class="co-item" data-act="signOut"><span class="mini" style="background:#3A3F46"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></span><span class="nm" id="acctEmail">Signed in</span><span class="rt">Sign Out</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+    <button type="button" class="co-item" data-act="delAcct"><span class="mini" style="background:#4A2626;color:#F0645A"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></span><span class="nm" style="color:var(--red)">Delete My Account</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
     <p class="sec">Backup</p>
     <button type="button" class="co-item" data-act="exportBackup"><span class="mini" style="background:#3A3F46"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></span><span class="nm">Export Backup</span><span class="rt" id="bkSub"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
     <button type="button" class="co-item" data-act="importBackup"><span class="mini" style="background:#3A3F46"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></svg></span><span class="nm">Import Backup</span><span class="rt"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
@@ -803,6 +806,16 @@ dialog:not(#weekDlg):not(#fyDlg){max-height:calc(100dvh + var(--vgap,0px) - env(
     <button type="button" class="text-btn" data-act="cropReset" style="margin:6px auto 0;display:flex">Reset</button>
   </div>
   <div class="foot"><button type="button" class="btn glass" data-act="cropCancel">Cancel</button><button type="button" class="btn pri" data-act="cropUse">Use Logo</button></div>
+</dialog>
+<dialog id="delAcctDlg" aria-labelledby="delAcctTitle">
+  <div class="sheet" style="padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))">
+    <div class="grabber"></div>
+    <div class="sheet-title"><h2 id="delAcctTitle">Delete Account</h2><button type="button" class="x" data-act="closeDelAcct" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <p style="margin:0 2px 14px;font-size:15px;line-height:1.45">This permanently deletes your hours, companies, invoices, events and your login. It can’t be undone, so export a backup first if you might want your data.</p>
+    <label>Password<input type="password" id="delPw" autocomplete="current-password"></label>
+    <p class="err" id="delErr" role="alert"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"><button type="button" class="btn glass" data-act="closeDelAcct">Cancel</button><button type="button" class="btn danger" data-act="doDelAcct" id="delAcctBtn">Delete Everything</button></div>
+  </div>
 </dialog>
 <dialog id="impDlg" aria-labelledby="impTitle">
   <div class="sheet" style="padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))">
@@ -1246,7 +1259,7 @@ addEventListener('pageshow', fitScreen);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) setTimeout(fitScreen, 100); });
 addEventListener('orientationchange', () => setTimeout(fitScreen, 300));
 /* ---------- version and update check ---------- */
-const APP_VERSION = '2.1', APP_DATE = '10 Nov 2026';
+const APP_VERSION = '2.1.2', APP_DATE = '10 Nov 2026';
 function paintAbout(){
   fitScreen();
   $('#appVer').textContent = APP_VERSION;
@@ -2419,7 +2432,7 @@ async function applyBackup(){
 impDlg.addEventListener('click', e => { if(e.target === impDlg) impDlg.close(); });
 
 /* ---------- access approval: new accounts wait until you approve them ---------- */
-let isAdmin = false, accessUnsub = null, accUnsub = null, accList = [];
+let deletingAccount = false, isAdmin = false, accessUnsub = null, accUnsub = null, accList = [];
 function stopAccess(){ [accessUnsub, accUnsub].forEach(f => { try{ f && f(); }catch(e){} }); accessUnsub = accUnsub = null; accList = []; }
 function enterApp(){ mode = 'db'; showOnly(null); startData(); }
 function showWait(st){
@@ -2431,13 +2444,14 @@ function showWait(st){
   $('#waitTitle').textContent = m[0]; $('#waitMsg').textContent = m[1];
 }
 async function checkAccess(user){
+  deletingAccount = false;
   /* the owner is recognised by the database rules: only they can list access requests */
   isAdmin = await fs.collection('access').where('status', '==', 'pending').limit(1).get().then(() => true).catch(() => false);
   if(isAdmin){ mode = 'admin'; showOnly('adminView');  renderAccess(); watchRequests(); return; }
   const ref = fs.doc('access/' + user.uid);
   const me = user.uid;
   accessUnsub = ref.onSnapshot(snap => {
-    if(uid !== me || isAdmin) return;   /* ignore a listener left over from another sign-in */
+    if(uid !== me || isAdmin || deletingAccount) return;   /* ignore a listener left over from another sign-in, or while deleting */
     if(!snap.exists){ ref.set({email: user.email || '', status: 'pending', requested: Date.now()}).catch(() => {}); showWait('pending'); return; }
     const st = (snap.data() || {}).status;
     if(st === 'approved'){ if(mode !== 'db') enterApp(); }
@@ -2447,30 +2461,68 @@ async function checkAccess(user){
 function watchRequests(){
   accUnsub = fs.collection('access').onSnapshot(q => {
     accList = q.docs.map(d => Object.assign({uid: d.id}, d.data())).sort((a, b) => (b.requested || 0) - (a.requested || 0));
-    const n = accList.filter(a => a.status === 'pending').length;
+    const n = currentAccess().filter(a => a.status === 'pending').length;
     $('#accPendHead').textContent = n ? `Waiting (${n})` : 'Waiting';
     renderAccess();
   }, () => {});
 }
+function currentAccess(){
+  const when = a => Math.max(a.requested || 0, a.approvedAt || 0, a.changedAt || 0), newest = new Map();
+  accList.forEach(a => { const k = (a.email || a.uid).toLowerCase(), cur = newest.get(k); if(!cur || when(a) > when(cur)) newest.set(k, a); });
+  return accList.filter(a => newest.get((a.email || a.uid).toLowerCase()) === a);
+}
 function renderAccess(){
   const when = ms => ms ? longFmt.format(ms) : '';
   const row = (a, btns) => `<div class="acc-row"><div class="acc-info"><span class="t">${esc(a.email || a.uid)}</span><span class="s">${a.status === 'approved' ? 'Approved ' + when(a.approvedAt) : 'Requested ' + when(a.requested)}</span></div>${btns}</div>`;
-  const pend = accList.filter(a => a.status === 'pending'), ok = accList.filter(a => a.status === 'approved'), no = accList.filter(a => a.status === 'denied' || a.status === 'removed');
+  const list = currentAccess();
+  const pend = list.filter(a => a.status === 'pending'), ok = list.filter(a => a.status === 'approved'), no = list.filter(a => a.status === 'denied' || a.status === 'removed');
   $('#accPending').innerHTML = pend.length ? pend.map(a => row(a, `<button type="button" class="btn pri sm" data-acc="approve" data-uid="${esc(a.uid)}">Approve</button><button type="button" class="btn glass sm" data-acc="deny" data-uid="${esc(a.uid)}">Deny</button>`)).join('') : '<p class="empty" style="padding:8px">No one waiting</p>';
   $('#accApproved').innerHTML = ok.length ? ok.map(a => row(a, `<button type="button" class="btn glass sm" data-acc="remove" data-uid="${esc(a.uid)}">Remove</button>`)).join('') : '<p class="empty" style="padding:8px">No one yet</p>';
-  $('#accOther').innerHTML = no.map(a => row(a, `<button type="button" class="btn glass sm" data-acc="approve" data-uid="${esc(a.uid)}">Approve</button>`)).join('');
+  $('#accOther').innerHTML = no.map(a => row(a, `<button type="button" class="btn glass sm" data-acc="approve" data-uid="${esc(a.uid)}">Approve</button><button type="button" class="btn glass sm del" data-acc="delete" data-uid="${esc(a.uid)}">Delete</button>`)).join('');
   $('#accOtherWrap').hidden = !no.length;
 }
 async function accAction(kind, uid, btn){
   const ref = fs.doc('access/' + uid);
   const go = async () => {
     try{
+      if(kind === 'delete'){
+        /* clear this record, and any older ones for the same email */
+        const a = accList.find(x => x.uid === uid), em = a && (a.email || '').toLowerCase();
+        const gone = accList.filter(x => x.uid === uid || (em && (x.email || '').toLowerCase() === em && x.status !== 'approved' && x.status !== 'pending'));
+        await Promise.all(gone.map(x => fs.doc('access/' + x.uid).delete()));
+        toast('Deleted'); return;
+      }
       if(kind === 'approve') await ref.update({status: 'approved', approvedAt: Date.now()});
       else await ref.update({status: kind === 'deny' ? 'denied' : 'removed', changedAt: Date.now()});
       toast(kind === 'approve' ? 'Approved' : kind === 'deny' ? 'Request denied' : 'Access removed');
     }catch(e){ toast('Couldn’t update. Check the database rules.'); }
   };
-  if(kind === 'remove') confirmTap(btn, 'Tap to Remove', go); else go();
+  if(kind === 'remove') confirmTap(btn, 'Tap to Remove', go);
+  else if(kind === 'delete') confirmTap(btn, 'Tap to Delete', go);
+  else go();
+}
+
+/* ---------- delete my account: the person's own data and login, nobody else's ---------- */
+async function deleteMyAccount(btn){
+  const user = fbAuth.currentUser; if(!user) return;
+  const pw = $('#delPw').value, err = $('#delErr'), reset = () => { btn.disabled = false; btn.textContent = 'Delete Everything'; };
+  err.textContent = '';
+  if(!pw){ err.textContent = 'Enter your password to confirm.'; return; }
+  btn.disabled = true; btn.textContent = 'Deleting…';
+  try{ await user.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(user.email, pw)); }
+  catch(e){ reset(); err.textContent = authMsg(e); return; }
+  deletingAccount = true; stopAccess();   /* stop watching the access record so it isn't recreated while it's removed */
+  try{
+    const ids = E.map(e => e.id);
+    for(let i = 0; i < ids.length; i += 400){ const b = fs.batch(); ids.slice(i, i + 400).forEach(id => b.delete(entriesCol.doc(id))); await b.commit(); }
+    await stateRef.delete();
+  }catch(e){ deletingAccount = false; reset(); err.textContent = 'Couldn’t delete your data. Check your connection and try again.'; return; }
+  try{ await fs.doc('access/' + user.uid).delete(); }catch(e){}
+  stopData();
+  try{ await user.delete(); }
+  catch(e){ deletingAccount = false; reset(); err.textContent = 'Your data was deleted, but your login couldn’t be. Ask the app owner to remove it.'; return; }
+  $('#delAcctDlg').close(); if(setDlg.open) setDlg.close();
+  toast('Your account has been deleted');
 }
 
 /* ---------- your details ---------- */
@@ -2686,6 +2738,9 @@ document.addEventListener('click', async ev => {
   else if(act === 'myDetails') openMe();
   else if(act === 'history') openHist();
   else if(act === 'signOut'){ if(setDlg.open) setDlg.close(); fbAuth.signOut(); }
+  else if(act === 'delAcct'){ $('#delPw').value = ''; $('#delErr').textContent = ''; $('#delAcctBtn').disabled = false; $('#delAcctBtn').textContent = 'Delete Everything'; showSheet($('#delAcctDlg')); }
+  else if(act === 'closeDelAcct') $('#delAcctDlg').close();
+  else if(act === 'doDelAcct') confirmTap(b, 'Tap Again to Delete', () => deleteMyAccount(b));
   else if(act === 'signUp') signUp();
   else if(act === 'resetPw') resetPw();
   else if(act === 'saveCfg') saveConfig();
