@@ -592,7 +592,7 @@ select{display:block;width:100%;margin-top:6px;background:var(--field);border:1p
 .zoom-row input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--alt)}
 details,details *,summary{box-sizing:border-box}
 dialog{overflow-x:hidden}
-.auth{max-width:400px;margin:0 auto;padding:56px 22px 40px;overflow-y:auto}
+.auth{width:100%;max-width:480px;margin:0 auto;padding:56px 22px 40px;overflow-y:auto}
 .auth h1{font-family:var(--display);font-size:42px;font-weight:700;margin:0 0 8px;line-height:1.05}
 .auth .sub{margin:0 0 22px;font-size:15px}
 /* home-screen app on iPhone: iOS reports a viewport that stops short of the bottom of the screen and blurs a band below the clock */
@@ -1246,7 +1246,7 @@ addEventListener('pageshow', fitScreen);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) setTimeout(fitScreen, 100); });
 addEventListener('orientationchange', () => setTimeout(fitScreen, 300));
 /* ---------- version and update check ---------- */
-const APP_VERSION = '2.0.1', APP_DATE = '10 Nov 2026';
+const APP_VERSION = '2.1', APP_DATE = '10 Nov 2026';
 function paintAbout(){
   fitScreen();
   $('#appVer').textContent = APP_VERSION;
